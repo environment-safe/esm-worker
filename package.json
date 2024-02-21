@@ -1,5 +1,5 @@
 {
-    "name": "esm-worker",
+    "name": "@environment-safe/esm-worker",
     "version": "0.0.1",
     "type": "module",
     "main": "dist/index.mjs",
