@@ -1,0 +1,15 @@
+{
+  "tags": {
+    "allowUnknownTags": true,
+    "dictionaries": ["jsdoc", "closure"]
+  },
+  "source": {
+    "include": ["."],
+    "includePattern": ".(mjs)$"
+  },
+  "plugins": [ "./node_modules/tsd-jsdoc/dist/plugin" ],
+  "opts": {
+      "template": "./node_modules/tsd-jsdoc/dist"
+  },
+  "sourceType": "module"
+}

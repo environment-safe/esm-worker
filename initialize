@@ -1,0 +1,39 @@
+#!/usr/bin/env bash
+mkdir -p dist
+mkdir -p docs
+PROJECT_NAME=${PWD##*/}
+curl "https://api.github.com/repos/khrome/${PROJECT_NAME}" -s -o github.json
+PROJECT_OWNER=`cat github.json | jq '.owner.login' | tr -d '"'`
+PROJECT_OWNER_URL=`cat github.json | jq '.owner.url' | tr -d '"'`
+PROJECT_DESCRIPTION=`cat github.json | jq '.description' | tr -d '"'`
+PROJECT_ISSUES_URL=`cat github.json | jq '.issues_url' | tr -d '"'`
+PROJECT_STUB_CLASS="node_modules/@open-automaton/moka/src/stub.mjs"
+s="{/number}"
+PROJECT_ISSUES_URL="${PROJECT_ISSUES_URL//$s/}"
+PROJECT_URL=`cat github.json | jq '.svn_url' | tr -d '"'`
+YEAR=`date +%Y`
+sleep 3
+curl "https://api.github.com/users/${PROJECT_OWNER}" -s -o user.json
+PROJECT_OWNER_NAME=`cat user.json | jq '.name' | tr -d '"'`
+PROJECT_OWNER_URL=`cat user.json | jq '.blog' | tr -d '"'`
+npm pkg set "name=$PROJECT_NAME"
+npm pkg set "description=$PROJECT_DESCRIPTION"
+npm pkg set "version=0.0.1"
+npm pkg set "author=$PROJECT_OWNER_NAME <${PROJECT_OWNER}>(${PROJECT_OWNER_URL})"
+npm pkg set "bugs.url=$PROJECT_ISSUES_URL"
+npm pkg set "repository.url=$PROJECT_URL"
+npm pkg set "homepage=$PROJECT_URL"
+npm pkg set "moka.stub=$PROJECT_STUB_CLASS"
+cat README.md | tr '\n' '\r' | sed -e "s/<span>.*<\/span>/${PROJECT_NAME}\r============================\r${PROJECT_DESCRIPTION}\r\rUsage\r-----/"  | tr '\r' '\n' > README-COPY.md
+sleep 3
+rm README.md
+mv README-COPY.md README.md
+cat LICENSE | sed -e "s/∞/${YEAR}/" > LICENSE-COPY
+cat LICENSE-COPY | sed -e "s/Abbey Hawk Sparrow/${PROJECT_OWNER_NAME}/" > LICENSE
+rm LICENSE-COPY
+npm install
+rm user.json
+rm github.json
+rm -- "$0"
+git add LICENSE README.md initialize package.json
+git commit -m "initialized"
