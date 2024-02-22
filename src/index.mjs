@@ -15,7 +15,7 @@ if(isBrowser || isJsDom){
             options.map = JSON.parse(mapEls[0].innerHTML);
         }
         if(options.map){
-            var iframe = document.createElement('iframe');
+            const iframe = document.createElement('iframe');
             const callbackId = `cb${Math.floor(Math.random()*1000000000)}`;
             const terminateId = `tm${Math.floor(Math.random()*1000000000)}`;
             const worker = {};
@@ -27,7 +27,7 @@ if(isBrowser || isJsDom){
                     resolve();
                 };
             });
-            var html = `<html><head>
+            const html = `<html><head>
                 <script type="importmap">${JSON.stringify(options.map)}</script>
             </head><body onload="parent.workersReady.${callbackId}(this.window)"><script>
                 window.self = {};
