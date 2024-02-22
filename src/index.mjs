@@ -1,16 +1,3 @@
-/*
-import { isBrowser, isJsDom } from 'browser-or-node';
-import * as mod from 'module';
-import * as path from 'path';
-let internalRequire = null;
-if(typeof require !== 'undefined') internalRequire = require;
-const ensureRequire = ()=> (!internalRequire) && (internalRequire = mod.createRequire(import.meta.url));
-//*/
-
-/**
- * A JSON object
- * @typedef { object } JSON
- */
 import { isBrowser, isJsDom } from 'browser-or-node';
 import * as mod from 'module';
 let internalRequire = null;
@@ -26,7 +13,6 @@ if(isBrowser || isJsDom){
                 (el)=> el.getAttribute('type') === 'importmap'
             );
             options.map = JSON.parse(mapEls[0].innerHTML);
-            console.log('MAP', options.map);
         }
         if(options.map){
             var iframe = document.createElement('iframe');
@@ -34,12 +20,10 @@ if(isBrowser || isJsDom){
             const terminateId = `tm${Math.floor(Math.random()*1000000000)}`;
             const worker = {};
             window.workersReady[terminateId] = function(window){
-                //delete window.workersReady[callbackId];
                 iframe.remove();
             };
             worker.ready = new Promise((resolve, reject)=>{
                 window.workersReady[callbackId] = function(window){
-                    //delete window.workersReady[callbackId];
                     resolve();
                 };
             });
@@ -62,6 +46,7 @@ if(isBrowser || isJsDom){
                 iframe.contentWindow.postMessage(data, '*');
             };
             window.onmessage = function(e) {
+                if(typeof e.data !== 'string') return;
                 if(worker.onmessage) worker.onmessage(e);
             };
             worker.terminate = ()=>{
